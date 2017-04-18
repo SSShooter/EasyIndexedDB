@@ -46,15 +46,10 @@ let idxDB = {
 		let objectStore = this.transaction.objectStore("diary");
 		let request = objectStore.add(data);
 		request.onsuccess = () => {
-			if (cb) cb({
-				error: 0,
-				data: data
-			})
+			if(cb) cb({error: 0, data: data});
 		};
 		request.onerror = () => {
-			if (cb) cb({
-				error: 1
-			})
+			if(cb) cb({error: 1});
 		};
 	},
 	clearObjectStore(id, cb) {
@@ -62,28 +57,23 @@ let idxDB = {
 		let objectStore = this.transaction.objectStore("diary");
 		let request = objectStore.clear();
 		request.onsuccess = () => {
-			if (cb) cb({
-				error: 0,
-				data: id
-			});
+			if (cb) cb({error: 0, data: id});
 		};
 		request.onerror = () => {
-			if (cb) cb({
-				error: 1
-			});
+			if (cb) cb({error: 1});
 		};
 	},
 	addmData(mdata, cb) {
 		this.startTransaction();
 		let objectStore = this.transaction.objectStore("diary");
-		for (let c = 0; c < mdata.length; c++) {
-			let request = objectStore.add(mdata[c]);
+		mdata.forEach(function(value){
+			let request = objectStore.add(value);
 			request.onerror = () => {
 				if (cb) cb({
 					error: 1
 				})
 			}
-		}
+		})
 	},
 	deleteData(id, cb) {
 		this.startTransaction();
@@ -105,7 +95,7 @@ let idxDB = {
 		this.startTransaction();
 		let objectStore = this.transaction.objectStore("diary");
 		let request = objectStore.get(id);
-		request.onsuccess = () => {
+		request.onsuccess = e => {
 			if (cb) cb({
 				error: 0,
 				data: e.target.result
@@ -121,7 +111,7 @@ let idxDB = {
 		this.startTransaction();
 		let objectStore = this.transaction.objectStore("diary");
 		let rowData = [];
-		objectStore.openCursor(IDBKeyRange.lowerBound(0)).onsuccess = (e) => {
+		objectStore.openCursor(IDBKeyRange.lowerBound(0)).onsuccess = e => {
 			let cursor = e.target.result;
 			if (!cursor && cb) {
 				cb({
